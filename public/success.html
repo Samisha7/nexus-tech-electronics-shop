@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusTech | Order Successful</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .success-container {
+            text-align: center;
+            max-width: 600px;
+            margin: 6rem auto;
+            background-color: var(--card-bg);
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .success-icon {
+            font-size: 5rem;
+            color: #22c55e;
+            margin-bottom: 1rem;
+        }
+        .success-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .success-message {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        .order-number {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="/"><img src="/logo.png" alt="NexusTech Logo">NEXUSTECH</a>
+        </div>
+        <div class="search-bar">
+            <form onsubmit="handleSearch(event)">
+                <input type="text" id="search-input" placeholder="Search products...">
+                <button type="submit" class="btn btn-primary search-btn">Search</button>
+            </form>
+        </div>
+        <nav class="nav-links">
+            <a href="/">Shop</a>
+            <a href="/cart.html" id="cart-link">Cart <span id="cart-count">0</span></a>
+            <a href="/profile.html" id="profile-link" style="display: none;">Profile</a>
+            <a href="/login.html" id="auth-link">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="success-container">
+            <div class="success-icon">✓</div>
+            <h1 class="success-title">Thank You!</h1>
+            <p class="success-message">Your order has been placed successfully.</p>
+            <p class="success-message" id="order-number-display" style="display: none;">Order Number: <span class="order-number" id="order-id"></span></p>
+            
+            <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 1rem;">
+                <a href="/profile.html" class="btn btn-primary" id="view-orders-btn" style="display: none;">View My Orders</a>
+                <a href="/" class="btn btn-secondary">Continue Shopping</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 NexusTech Electronics. All rights reserved.</p>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            updateCartCount();
+            await checkAuthStatus();
+            
+            if (currentUser) {
+                document.getElementById('view-orders-btn').style.display = 'inline-block';
+            }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            if (orderId) {
+                document.getElementById('order-number-display').style.display = 'block';
+                document.getElementById('order-id').textContent = '#' + orderId;
+            }
+        });
+    </script>
+</body>
+</html>

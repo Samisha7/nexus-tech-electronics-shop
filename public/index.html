@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusTech | Premium Electronics</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="/"><img src="/logo.png" alt="NexusTech Logo">NEXUSTECH</a>
+        </div>
+        <div class="search-bar">
+            <form onsubmit="handleSearch(event)">
+                <input type="text" id="search-input" placeholder="Search products...">
+                <button type="submit" class="btn btn-primary search-btn">Search</button>
+            </form>
+        </div>
+        <nav class="nav-links">
+            <a href="/">Shop</a>
+            <a href="/cart.html" id="cart-link">Cart <span id="cart-count">0</span></a>
+            <a href="/profile.html" id="profile-link" style="display: none;">Profile</a>
+            <a href="/login.html" id="auth-link">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Elevate Your Tech</h1>
+                <p>Discover premium electronics designed for the modern lifestyle.</p>
+                <a href="#products" class="btn btn-primary">Shop Now</a>
+            </div>
+        </section>
+
+        <section id="products" class="products-section">
+            <h2 class="section-title">Our Collection</h2>
+            
+            <div class="category-filters" id="category-filters">
+                <!-- Category buttons will be loaded here -->
+            </div>
+
+            <div class="product-grid" id="product-list">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 NexusTech Electronics. All rights reserved.</p>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            loadProducts();
+            updateCartCount();
+            checkAuthStatus();
+            
+            // Check if there's a search query in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('search');
+            if (query) {
+                document.getElementById('search-input').value = query;
+            }
+        });
+    </script>
+</body>
+</html>
