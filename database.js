@@ -29,7 +29,10 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 image_url TEXT,
                 stock INTEGER DEFAULT 0
             )`, (err) => {
-                if (!err) seedProducts();
+                if (!err) {
+                    seedProducts();
+                    ensureRequiredProductImages();
+                }
             });
 
             // Orders table
@@ -69,7 +72,7 @@ function seedProducts() {
             
             // Wearables
             insert.run('Minimalist Smartwatch', 'Sleek smartwatch tracking your fitness, notifications, and more.', 199.50, 'Wearables', 4.6, 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80', 30);
-            insert.run('Fitness Tracker Band', 'Lightweight fitness tracker with heart rate monitoring.', 49.99, 'Wearables', 4.2, 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b0?auto=format&fit=crop&w=500&q=80', 80);
+            insert.run('Fitness Tracker Band', 'Lightweight fitness tracker with heart rate monitoring.', 49.99, 'Wearables', 4.2, 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=500&q=80', 80);
             
             // Computing
             insert.run('Mechanical Keyboard', 'RGB mechanical keyboard with tactile switches for the ultimate typing experience.', 149.00, 'Computing', 4.9, 'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=500&q=80', 20);
@@ -78,12 +81,29 @@ function seedProducts() {
             insert.run('Pro Laptop Stand', 'Adjustable aluminum laptop stand for better posture.', 39.99, 'Computing', 4.5, 'https://images.unsplash.com/photo-1621252179027-94459d278660?auto=format&fit=crop&w=500&q=80', 60);
 
             // Gaming
-            insert.run('Next-Gen Gaming Console', 'Experience immersive 4K gaming with ultra-fast load times.', 499.99, 'Gaming', 4.9, 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?auto=format&fit=crop&w=500&q=80', 10);
+            insert.run('Next-Gen Gaming Console', 'Experience immersive 4K gaming with ultra-fast load times.', 499.99, 'Gaming', 4.9, 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=500&q=80', 10);
             insert.run('VR Headset System', 'Standalone virtual reality headset for untethered experiences.', 349.00, 'Gaming', 4.7, 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?auto=format&fit=crop&w=500&q=80', 25);
             insert.run('RGB Gaming Mousepad', 'Extended gaming mousepad with customizable RGB lighting edges.', 29.99, 'Gaming', 4.3, 'https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&w=500&q=80', 100);
 
             insert.finalize();
         }
+    });
+}
+
+function ensureRequiredProductImages() {
+    const updates = [
+        {
+            name: 'Fitness Tracker Band',
+            imageUrl: '/images/fitness-tracker-band.svg'
+        },
+        {
+            name: 'Next-Gen Gaming Console',
+            imageUrl: '/images/next-gen-gaming-console.svg'
+        }
+    ];
+
+    updates.forEach(({ name, imageUrl }) => {
+        db.run('UPDATE products SET image_url = ? WHERE name = ?', [imageUrl, name]);
     });
 }
 

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Next-gen gaming console illustration">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="console" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg2)"/>
+  <rect x="200" y="110" width="150" height="380" rx="34" fill="url(#console)"/>
+  <rect x="245" y="130" width="60" height="340" rx="18" fill="#020617"/>
+  <rect x="460" y="150" width="170" height="300" rx="30" fill="#0f172a" stroke="#334155" stroke-width="6"/>
+  <rect x="475" y="182" width="140" height="10" rx="5" fill="url(#accent)"/>
+  <g transform="translate(140,430)">
+    <rect x="0" y="0" width="190" height="95" rx="45" fill="#0f172a" stroke="#334155" stroke-width="5"/>
+    <circle cx="48" cy="48" r="13" fill="#22d3ee"/>
+    <circle cx="142" cy="48" r="13" fill="#3b82f6"/>
+    <rect x="84" y="40" width="22" height="8" rx="4" fill="#94a3b8"/>
+  </g>
+  <text x="40" y="560" fill="#cbd5e1" font-family="Arial, sans-serif" font-size="30">Next-Gen Gaming Console</text>
+</svg>

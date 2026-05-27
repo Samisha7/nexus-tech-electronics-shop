@@ -1,9 +1,16 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const sessionSecret = process.env.SESSION_SECRET;
+
+if (!sessionSecret) {
+    console.error('SESSION_SECRET is required. Set it in your environment or .env file.');
+    process.exit(1);
+}
 
 // Middleware
 app.use(express.json());
@@ -11,10 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session configuration
 app.use(session({
-    secret: 'super_secret_e_commerce_key',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 // Protect all HTML pages except login
@@ -42,6 +49,8 @@ app.use('/api/orders', orderRoutes);
 
 // Fallback for SPA routing - Serve index.html
 app.use((req, res) => {
+    const publicDir = path.join(__dirname, 'public');
+
     // If the request is for an API endpoint that doesn't exist, return 404 JSON
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
@@ -49,7 +58,11 @@ app.use((req, res) => {
     
     // Check if the path ends with .html, if so serve the file directly if it exists
     if (req.path.endsWith('.html')) {
-        return res.sendFile(path.join(__dirname, 'public', req.path));
+        const requestedFile = path.resolve(publicDir, `.${req.path}`);
+        if (!requestedFile.startsWith(publicDir)) {
+            return res.status(400).json({ error: 'Invalid path' });
+        }
+        return res.sendFile(requestedFile);
     }
     
     if (!req.session.userId) {
@@ -57,7 +70,7 @@ app.use((req, res) => {
     }
     
     // Let frontend router or pages handle themselves
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 app.listen(PORT, () => {

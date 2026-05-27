@@ -3,6 +3,41 @@
 let currentUser = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+// Error handling utility
+function showError(message, duration = 3000) {
+    const alertBox = document.createElement('div');
+    alertBox.className = 'alert error';
+    alertBox.textContent = message;
+    alertBox.style.display = 'block';
+    alertBox.style.position = 'fixed';
+    alertBox.style.top = '20px';
+    alertBox.style.right = '20px';
+    alertBox.style.zIndex = '9999';
+    alertBox.style.minWidth = '300px';
+    document.body.appendChild(alertBox);
+    
+    setTimeout(() => {
+        alertBox.remove();
+    }, duration);
+}
+
+function showSuccess(message, duration = 3000) {
+    const alertBox = document.createElement('div');
+    alertBox.className = 'alert success';
+    alertBox.textContent = message;
+    alertBox.style.display = 'block';
+    alertBox.style.position = 'fixed';
+    alertBox.style.top = '20px';
+    alertBox.style.right = '20px';
+    alertBox.style.zIndex = '9999';
+    alertBox.style.minWidth = '300px';
+    document.body.appendChild(alertBox);
+    
+    setTimeout(() => {
+        alertBox.remove();
+    }, duration);
+}
+
 // Initialization
 async function checkAuthStatus() {
     try {
@@ -73,7 +108,7 @@ function addToCart(product) {
         });
     }
     saveCart();
-    alert('Added to cart!');
+    showSuccess('Added to cart!');
 }
 
 // Categories and Search
@@ -88,10 +123,14 @@ async function loadCategories() {
         const urlParams = new URLSearchParams(window.location.search);
         const currentCategory = urlParams.get('category') || 'All';
 
-        filtersContainer.innerHTML = categories.map(cat => `
-            <button class="category-btn ${cat === currentCategory ? 'active' : ''}" 
-                    onclick="filterByCategory('${cat}')">${cat}</button>
-        `).join('');
+        filtersContainer.innerHTML = '';
+        categories.forEach((cat) => {
+            const btn = document.createElement('button');
+            btn.className = `category-btn ${cat === currentCategory ? 'active' : ''}`;
+            btn.textContent = cat;
+            btn.addEventListener('click', () => filterByCategory(cat));
+            filtersContainer.appendChild(btn);
+        });
     } catch (e) {
         console.error('Error loading categories', e);
     }
@@ -215,34 +254,30 @@ async function loadOrderHistory() {
             return;
         }
 
-        orderList.innerHTML = '';
-        for (const order of orders) {
-            // Fetch items for each order
-            const itemRes = await fetch(`/api/orders/${order.id}`);
-            const orderData = await itemRes.json();
-            
+        orderList.innerHTML = orders.map(order => {
             const date = new Date(order.created_at).toLocaleDateString();
-            
-            orderList.innerHTML += `
+            const itemsHtml = order.items.map(i => `
+                <div class="order-item">
+                    <span>${i.quantity}x ${i.name}</span>
+                    <span>$${(i.price * i.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            return `
                 <div class="order-card">
                     <div class="order-header">
                         <span>Order #${order.id} &bull; ${date}</span>
                         <span style="color: #22c55e;">Status: ${order.status.toUpperCase()}</span>
                     </div>
                     <div class="order-items">
-                        ${orderData.items.map(i => `
-                            <div class="order-item">
-                                <span>${i.quantity}x ${i.name}</span>
-                                <span>$${(i.price * i.quantity).toFixed(2)}</span>
-                            </div>
-                        `).join('')}
+                        ${itemsHtml}
                     </div>
                     <div style="text-align: right; margin-top: 1rem; font-weight: bold;">
                         Total: $${order.total_amount.toFixed(2)}
                     </div>
                 </div>
             `;
-        }
+        }).join('');
     } catch (e) {
         console.error(e);
         orderList.innerHTML = '<p>Error loading order history.</p>';
@@ -287,15 +322,20 @@ function removeFromCart(index) {
 
 async function checkout() {
     if (cart.length === 0) {
-        alert('Cart is empty');
+        showError('Cart is empty');
         return;
     }
+
+    const payload = cart.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity
+    }));
 
     try {
         const res = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: cart })
+            body: JSON.stringify({ items: payload })
         });
         
         if (res.ok) {
@@ -305,11 +345,11 @@ async function checkout() {
             window.location.href = `/success.html?orderId=${data.orderId}`;
         } else {
             const data = await res.json();
-            alert(data.error || 'Checkout failed');
+            showError(data.error || 'Checkout failed');
         }
     } catch (e) {
         console.error(e);
-        alert('Checkout failed due to network error');
+        showError('Checkout failed due to network error');
     }
 }
 
@@ -336,9 +376,11 @@ async function handleAuth(event, type) {
         const data = await res.json();
         
         if (res.ok) {
-            alertBox.className = 'alert success';
-            alertBox.textContent = data.message;
-            alertBox.style.display = 'block';
+            if (alertBox) {
+                alertBox.className = 'alert success';
+                alertBox.textContent = data.message;
+                alertBox.style.display = 'block';
+            }
             
             setTimeout(() => {
                 if (type === 'register') {
@@ -350,13 +392,22 @@ async function handleAuth(event, type) {
                 }
             }, 1000);
         } else {
-            alertBox.className = 'alert error';
-            alertBox.textContent = data.error;
-            alertBox.style.display = 'block';
+            const errorMessage = data.errors ? data.errors.map(e => e.msg).join(', ') : data.error;
+            if (alertBox) {
+                alertBox.className = 'alert error';
+                alertBox.textContent = errorMessage;
+                alertBox.style.display = 'block';
+            } else {
+                showError(errorMessage);
+            }
         }
     } catch (e) {
-        alertBox.className = 'alert error';
-        alertBox.textContent = 'Network error occurred';
-        alertBox.style.display = 'block';
+        if (alertBox) {
+            alertBox.className = 'alert error';
+            alertBox.textContent = 'Network error occurred';
+            alertBox.style.display = 'block';
+        } else {
+            showError('Network error occurred');
+        }
     }
 }

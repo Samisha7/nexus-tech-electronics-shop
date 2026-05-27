@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusTech | Admin Orders</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        .admin-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
+        .admin-toolbar input { flex: 1; }
+        .order-admin-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+        .order-admin-header { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+        .order-admin-items { margin-top: 0.75rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem; }
+        .order-admin-item { display: flex; justify-content: space-between; color: #cbd5e1; margin-bottom: 0.35rem; }
+        .order-admin-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="/"><img src="/logo.png" alt="NexusTech Logo">NEXUSTECH</a>
+        </div>
+        <nav class="nav-links">
+            <a href="/">Shop</a>
+            <a href="/admin-orders.html" style="color: var(--primary-color);">Admin Orders</a>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <h1 style="margin-bottom: 1rem;">Order Approval</h1>
+        <div class="admin-toolbar">
+            <input id="admin-key" type="password" placeholder="Enter admin key (x-admin-key)">
+            <button class="btn btn-primary" id="load-orders-btn">Load Orders</button>
+        </div>
+        <div id="admin-orders-list"></div>
+    </main>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/admin-orders.js"></script>
+</body>
+</html>
